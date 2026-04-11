@@ -5,15 +5,13 @@ let users = require("./auth_users.js").users;
 const public_users = express.Router();
 const axios = require('axios');
 
-// Task 10: Get all books using Promise & Axios style
 public_users.get('/', function (req, res) {
     const getBooks = new Promise((resolve, reject) => {
         resolve(res.send(JSON.stringify({books}, null, 4)));
     });
-    getBooks.then(() => console.log("Task 10 resolved using Promise"));
+    getBooks.then(() => console.log("Task 10 resolved"));
 });
 
-// Task 11: Get book details based on ISBN using Promise
 public_users.get('/isbn/:isbn', function (req, res) {
     const isbn = req.params.isbn;
     const getBook = new Promise((resolve, reject) => {
@@ -26,7 +24,6 @@ public_users.get('/isbn/:isbn', function (req, res) {
     getBook.then(() => console.log("Task 11 resolved"));
 });
 
-// Task 12: Get book details based on author using Promise
 public_users.get('/author/:author', function (req, res) {
     const author = req.params.author;
     const getAuthor = new Promise((resolve) => {
@@ -36,7 +33,6 @@ public_users.get('/author/:author', function (req, res) {
     getAuthor.then(() => console.log("Task 12 resolved"));
 });
 
-// Task 13: Get all books based on title using Promise
 public_users.get('/title/:title', function (req, res) {
     const title = req.params.title;
     const getTitle = new Promise((resolve) => {
