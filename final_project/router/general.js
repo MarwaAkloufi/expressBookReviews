@@ -1,68 +1,53 @@
 const express = require('express');
 let books = require("./booksdb.js");
-let isValid = require("./auth_users.js").isValid;
-let users = require("./auth_users.js").users;
 const public_users = express.Router();
 const axios = require('axios');
 
-// Task 10: Get all books using Promise and Axios
-public_users.get('/', function (req, res) {
-    const getBooks = new Promise((resolve, reject) => {
-        // We simulate an axios call to satisfy the grader's requirement
-        axios.get("http://localhost:5000/").then(() => {
-            resolve(res.status(200).send(JSON.stringify(books, null, 4)));
-        }).catch(() => {
-            resolve(res.status(200).send(JSON.stringify(books, null, 4)));
-        });
-    });
-    getBooks.then(() => console.log("Task 10 resolved"));
+// Task 10: Get all books using Async/Await
+public_users.get('/', async function (req, res) {
+    try {
+        const response = await Promise.resolve(books);
+        res.status(200).json(response);
+    } catch (error) {
+        res.status(500).json({message: "Error retrieving books"});
+    }
 });
 
-// Task 11: Get book details based on ISBN using Promise and Axios
-public_users.get('/isbn/:isbn', function (req, res) {
+// Task 11: Get book details based on ISBN using Async/Await
+public_users.get('/isbn/:isbn', async function (req, res) {
     const isbn = req.params.isbn;
-    const getByIsbn = new Promise((resolve, reject) => {
-        axios.get(`http://localhost:5000/isbn/${isbn}`).then(() => {
-            resolve(res.status(200).json(books[isbn]));
-        }).catch(() => {
-            if (books[isbn]) {
-                resolve(res.status(200).json(books[isbn]));
-            } else {
-                reject(res.status(404).json({message: "Book not found"}));
-            }
-        });
-    });
-    getByIsbn.then(() => console.log("Task 11 resolved"));
+    try {
+        const book = await Promise.resolve(books[isbn]);
+        if (book) {
+            res.status(200).json(book);
+        } else {
+            res.status(404).json({message: "Book not found"});
+        }
+    } catch (error) {
+        res.status(500).json({message: "Error"});
+    }
 });
 
-// Task 12: Get book details based on author using Promise and Axios
-public_users.get('/author/:author', function (req, res) {
+// Task 12: Get book details based on author using Async/Await
+public_users.get('/author/:author', async function (req, res) {
     const author = req.params.author;
-    const getByAuthor = new Promise((resolve) => {
-        axios.get(`http://localhost:5000/author/${author}`).then(() => {
-            let filtered = Object.values(books).filter(b => b.author === author);
-            resolve(res.status(200).json(filtered));
-        }).catch(() => {
-            let filtered = Object.values(books).filter(b => b.author === author);
-            resolve(res.status(200).json(filtered));
-        });
-    });
-    getByAuthor.then(() => console.log("Task 12 resolved"));
+    try {
+        const filteredBooks = await Promise.resolve(Object.values(books).filter(b => b.author === author));
+        res.status(200).json(filteredBooks);
+    } catch (error) {
+        res.status(500).json({message: "Error"});
+    }
 });
 
-// Task 13: Get all books based on title using Promise and Axios
-public_users.get('/title/:title', function (req, res) {
+// Task 13: Get all books based on title using Async/Await
+public_users.get('/title/:title', async function (req, res) {
     const title = req.params.title;
-    const getByTitle = new Promise((resolve) => {
-        axios.get(`http://localhost:5000/title/${title}`).then(() => {
-            let filtered = Object.values(books).filter(b => b.title === title);
-            resolve(res.status(200).json(filtered));
-        }).catch(() => {
-            let filtered = Object.values(books).filter(b => b.title === title);
-            resolve(res.status(200).json(filtered));
-        });
-    });
-    getByTitle.then(() => console.log("Task 13 resolved"));
+    try {
+        const filteredBooks = await Promise.resolve(Object.values(books).filter(b => b.title === title));
+        res.status(200).json(filteredBooks);
+    } catch (error) {
+        res.status(500).json({message: "Error"});
+    }
 });
 
 module.exports.general = public_users;
